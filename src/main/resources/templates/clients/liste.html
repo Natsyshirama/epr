@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Liste Clients</title>
+</head>
+<body>
+<h2>Liste des Clients</h2>
+<a href="/clients/ajouter">Ajouter Client</a>
+<table border="1">
+    <tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Age</th><th>Actions</th></tr>
+    <tr th:each="client : ${clients}">
+        <td th:text="${client.id}">1</td>
+        <td th:text="${client.nom}">Nom</td>
+        <td th:text="${client.prenom}">Prénom</td>
+        <td th:text="${client.age}">0</td>
+        <td>
+            <a th:href="@{/clients/modifier/{id}(id=${client.id})}">Modifier</a>
+            <a th:href="@{/clients/supprimer/{id}(id=${client.id})}"
+               onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

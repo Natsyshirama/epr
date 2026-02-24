@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Formulaire Client</title>
+</head>
+<body>
+<h2 th:text="${client.id != null ? 'Modifier Client' : 'Ajouter Client'}"></h2>
+
+<form th:action="@{${client.id != null ? '/clients/modifier' : '/clients/ajouter'}}"
+      th:object="${client}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+    Nom : <input type="text" th:field="*{nom}" required/><br/>
+    Prénom : <input type="text" th:field="*{prenom}"/><br/>
+    Age : <input type="number" th:field="*{age}" min="0"/><br/>
+    <button type="submit">Enregistrer</button>
+</form>
+
+<a href="/clients">Retour</a>
+</body>
+</html>
