@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clients")
-@CrossOrigin(origins = "http://localhost:5173") // Pour Vite/Vue.js
+@CrossOrigin(origins = "http://localhost:5173")
 public class ClientApiController {
 
     private final ClientRepository clientRepository;
