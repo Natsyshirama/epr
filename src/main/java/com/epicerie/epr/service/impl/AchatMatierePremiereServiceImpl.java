@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
+@Service // Spring doit gérer cette classe comme un composant.
+@RequiredArgsConstructor  //Elle génère automatiquement un constructeur avec tous les attributs final.
+@Transactional //Toutes les opérations dans cette classe sont exécutées dans une transaction.(system rollback en cas d'exception)
 public class AchatMatierePremiereServiceImpl implements AchatMatierePremierService {
 
     private final AchatMpRepository achatRepository;
@@ -20,7 +20,7 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
     private final VendeurRepository vendeurRepository;
     private final StatusPayementRepository statusRepository;
 
-    @Override
+    @Override //    j’implémente une méthode définie dans l’interface
     public AchatMp createAchat(
             Long typeId,
             Long vendeurId,
@@ -31,9 +31,9 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
             LocalDate semaineFin,
             Double montantPaye) {
 
-        validateInputs(quantite, prixAchat);
+        validateInputs(quantite, prixAchat, montantPaye);
 
-        TypeMp type = typeRepository.findById(typeId)
+        TypeMp type = typeRepository.findById( typeId)
                 .orElseThrow(() -> new RuntimeException("Type matière première introuvable"));
 
         Vendeur vendeur = vendeurRepository.findById(vendeurId)
@@ -76,7 +76,7 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
         AchatMp achat = achatRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Achat introuvable"));
 
-        validateInputs(quantite, prixAchat);
+        validateInputs(quantite, prixAchat, montantPaye);
 
         TypeMp type = typeRepository.findById(typeId)
                 .orElseThrow(() -> new RuntimeException("Type matière première introuvable"));
@@ -127,12 +127,15 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
     // MÉTHODES PRIVÉES
     // ==========================
 
-    private void validateInputs(Double quantite, Double prixAchat) {
+    private void validateInputs(Double quantite, Double prixAchat, Double montantPaye) {
         if (quantite == null || quantite <= 0) {
             throw new RuntimeException("Quantité invalide");
         }
         if (prixAchat == null || prixAchat <= 0) {
             throw new RuntimeException("Prix d'achat invalide");
+        }
+        if (montantPaye != null && montantPaye < 0) {
+            throw new RuntimeException("Montant payé invalide");
         }
     }
 

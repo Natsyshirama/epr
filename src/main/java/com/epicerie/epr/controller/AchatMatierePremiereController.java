@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController //Cette classe reçoit des requêtes HTTP et retourne du JSON 
 @RequestMapping("/api/achat-mp")
 @RequiredArgsConstructor
 @CrossOrigin("*")
@@ -68,6 +68,7 @@ public class AchatMatierePremiereController {
     public ResponseEntity<List<AchatMp>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
+
 
     // ==========================
     // GET BY ID
