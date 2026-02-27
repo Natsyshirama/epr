@@ -1,6 +1,7 @@
 package com.epicerie.epr.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vendeur")
@@ -13,6 +14,7 @@ public class Vendeur {
     private String nom;
     private String phone;
     private String info;
+    private LocalDate dateCreated;
 
     public Long getId() {
         return id;
@@ -44,5 +46,13 @@ public class Vendeur {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

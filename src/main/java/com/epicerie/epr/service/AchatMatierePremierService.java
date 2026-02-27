@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AchatMatierePremierService {
-
+//Toute classe qui implémente cette interface doit fournir ces méthodes. c'est le cas pour AcahatMatierePremiereServiceImpl
     AchatMp createAchat(
             Long typeId,
             Long vendeurId,
