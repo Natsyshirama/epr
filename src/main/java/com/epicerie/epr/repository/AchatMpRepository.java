@@ -18,4 +18,5 @@ public interface AchatMpRepository extends JpaRepository<AchatMp, Long> {
             LocalDate start,
             LocalDate end
     );
+    List<AchatMp> findByFeuilleAchatMpId(Long feuilleId);
 }

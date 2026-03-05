@@ -2,6 +2,7 @@ package com.epicerie.epr.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +22,7 @@ public class AchatMp {
 
     @ManyToOne
     @JoinColumn(name = "feuille_id" , nullable = false)
+    @JsonBackReference
     private FeuilleAchatMp feuilleAchatMp;
 
     private Double quantite;

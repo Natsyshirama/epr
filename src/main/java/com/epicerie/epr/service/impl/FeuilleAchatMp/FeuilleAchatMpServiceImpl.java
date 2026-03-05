@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,27 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
     private final VendeurRepository vendeurRepository;
     private final StatusPayementRepository statusRepository;
     
+     @Override
+    @Transactional(readOnly = true)
+    public List<FeuilleAchatMp> getFeuillesByVendeurId(Long vendeurId) {
+        Vendeur vendeur = vendeurRepository.findById(vendeurId)
+                .orElseThrow(() -> new RuntimeException("Vendeur introuvable"));
+
+        // Récupère toutes les feuilles qui contiennent au moins un achat de ce vendeur
+        return feuilleAchatMpRepository.findDistinctByAchatsVendeurId(vendeurId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AchatMp> getAchatsByFeuilleId(Long feuilleId) {
+        FeuilleAchatMp feuille = feuilleAchatMpRepository.findById(feuilleId)
+                .orElseThrow(() -> new RuntimeException("Feuille introuvable"));
+
+        
+            return achatRepository.findByFeuilleAchatMpId(feuilleId);
+
+    }
+
     @Override
     public FeuilleAchatMp createFeuille() {
 

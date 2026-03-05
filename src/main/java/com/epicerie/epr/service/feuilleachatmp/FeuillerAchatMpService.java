@@ -5,10 +5,19 @@ import com.epicerie.epr.model.AchatMp;
 import com.epicerie.epr.model.FeuilleAchatMp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface FeuillerAchatMpService {
-        FeuilleAchatMp createFeuille();
-        AchatMp addAchatToFeuille(
+
+    List<FeuilleAchatMp> getFeuillesByVendeurId(Long vendeurId);
+
+    List<AchatMp> getAchatsByFeuilleId(Long feuilleId);
+
+
+    FeuilleAchatMp createFeuille();
+
+    
+    AchatMp addAchatToFeuille(
             Long feuilleId,
             Long typeId,
             Long vendeurId,

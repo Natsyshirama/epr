@@ -8,7 +8,7 @@ import com.epicerie.epr.service.feuilleachatmp.FeuillerAchatMpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+ import java.util.List;
 
 @RestController
 @RequestMapping("/api/feuille-achat-mp")
@@ -16,6 +16,21 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class FeuilleAchatMpController  {
     private final FeuillerAchatMpService service;
+
+    // Liste des feuilles par vendeur
+    
+    @GetMapping("/vendeur/{vendeurId}")
+    public ResponseEntity<List<FeuilleAchatMp>> getFeuillesByVendeur(@PathVariable Long vendeurId) {
+        List<FeuilleAchatMp> feuilles = service.getFeuillesByVendeurId(vendeurId);
+        return ResponseEntity.ok(feuilles);
+    }
+
+    // Liste des achats par feuille
+    @GetMapping("/{feuilleId}/achats")
+    public ResponseEntity<List<AchatMp>> getAchatsByFeuille(@PathVariable Long feuilleId) {
+        List<AchatMp> achats = service.getAchatsByFeuilleId(feuilleId);
+        return ResponseEntity.ok(achats);
+    }
 
     @PostMapping
     public ResponseEntity<FeuilleAchatMp> createFeuille() {
