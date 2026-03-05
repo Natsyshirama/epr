@@ -18,6 +18,10 @@ public class AchatMp {
     @ManyToOne
     @JoinColumn(name = "vendeur_id", nullable = false)
     private Vendeur vendeur;
+    
+    @ManyToOne
+    @JoinColumn(name = "feuille_id")
+    private FeuilleAchatMp feuilleAchatMp;
 
     private Double quantite;
     private Double prixAchat;

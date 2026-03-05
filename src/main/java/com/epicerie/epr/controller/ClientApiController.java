@@ -6,7 +6,6 @@ import com.epicerie.epr.repository.ClientRepository;
 import org.springframework.lang.NonNull;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
