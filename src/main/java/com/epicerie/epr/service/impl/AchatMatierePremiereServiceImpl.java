@@ -1,11 +1,11 @@
 package com.epicerie.epr.service.impl;
 
-import com.epicerie.epr.model.*;
-import com.epicerie.epr.repository.*;
-import com.epicerie.epr.service.AchatMatierePremierService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+    import com.epicerie.epr.model.*;
+    import com.epicerie.epr.repository.*;
+    import com.epicerie.epr.service.AchatMatierePremierService;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +19,7 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
     private final TypeMpRepository typeRepository;
     private final VendeurRepository vendeurRepository;
     private final StatusPayementRepository statusRepository;
+    private final FeuilleAchatMpRepository feuilleAchatMpRepository;
 
     @Override //    j’implémente une méthode définie dans l’interface
     public AchatMp createAchat(
@@ -31,6 +32,9 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
             LocalDate semaineFin,
             Double montantPaye) {
 
+        
+        FeuilleAchatMp feuille = createNewFeuille();
+
         validateInputs(quantite, prixAchat, montantPaye);
 
         TypeMp type = typeRepository.findById( typeId)
@@ -42,6 +46,7 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
         AchatMp achat = new AchatMp();
 
         achat.setType(type);
+        achat.setFeuilleAchatMp(feuille);
         achat.setVendeur(vendeur);
         achat.setQuantite(quantite);
         achat.setPrixAchat(prixAchat);
@@ -123,6 +128,18 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
         achatRepository.deleteById(id);
     }
 
+    private FeuilleAchatMp createNewFeuille() {
+
+    FeuilleAchatMp feuille = new FeuilleAchatMp();
+
+    String numero = generateNumeroFeuille();
+
+    feuille.setNumero(numero);
+    feuille.setDateCreation(LocalDate.now());
+
+    return feuilleAchatMpRepository.save(feuille);
+}
+
     // ==========================
     // MÉTHODES PRIVÉES
     // ==========================
@@ -154,4 +171,20 @@ public class AchatMatierePremiereServiceImpl implements AchatMatierePremierServi
         return statusRepository.findByNom("PARTIEL")
                 .orElseThrow(() -> new RuntimeException("Status PARTIEL non configuré"));
     }
+
+    private String generateNumeroFeuille() {
+
+    FeuilleAchatMp last = feuilleAchatMpRepository
+            .findTopByOrderByIdDesc()
+            .orElse(null);
+
+    int nextNumber = 1;
+
+    if (last != null) {
+        String lastNumero = last.getNumero().replace("FMP-", "");
+        nextNumber = Integer.parseInt(lastNumero) + 1;
+    }
+
+    return String.format("FMP-%04d", nextNumber);
+}
 }

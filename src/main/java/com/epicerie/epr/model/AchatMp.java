@@ -18,9 +18,9 @@ public class AchatMp {
     @ManyToOne
     @JoinColumn(name = "vendeur_id", nullable = false)
     private Vendeur vendeur;
-    
+
     @ManyToOne
-    @JoinColumn(name = "feuille_id")
+    @JoinColumn(name = "feuille_id" , nullable = false)
     private FeuilleAchatMp feuilleAchatMp;
 
     private Double quantite;
@@ -135,6 +135,12 @@ public class AchatMp {
 
     public void setMontantReste(Double montantReste) {
         this.montantReste = montantReste;
+    }
+    public FeuilleAchatMp getFeuilleAchatMp() {
+        return feuilleAchatMp;
+    }
+    public void setFeuilleAchatMp(FeuilleAchatMp feuilleAchatMp) {
+        this.feuilleAchatMp = feuilleAchatMp;
     }
 
     @PrePersist
