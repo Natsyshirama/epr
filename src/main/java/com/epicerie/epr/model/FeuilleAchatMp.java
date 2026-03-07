@@ -23,6 +23,10 @@ public class FeuilleAchatMp {
     private LocalDate dateCreation;
 
     private Boolean valide = false;
+    
+    @ManyToOne
+    @JoinColumn(name = "vendeur_id", nullable = false)
+    private Vendeur vendeur;
 
     @OneToMany(mappedBy = "feuilleAchatMp", cascade = CascadeType.ALL)
     @JsonManagedReference

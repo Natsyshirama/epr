@@ -70,11 +70,19 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
         FeuilleAchatMp feuille = feuilleAchatMpRepository.findById(feuilleId)
                 .orElseThrow(() -> new RuntimeException("Feuille introuvable"));
 
+        validateInputs(quantite, prixAchat, montantPaye);
+
         TypeMp type = typeRepository.findById(typeId)
                 .orElseThrow(() -> new RuntimeException("Type introuvable"));
 
         Vendeur vendeur = vendeurRepository.findById(vendeurId)
                 .orElseThrow(() -> new RuntimeException("Vendeur introuvable"));
+
+        if (feuille.getVendeur() == null) {
+            feuille.setVendeur(vendeur);
+        } else if (!feuille.getVendeur().getId().equals(vendeurId)) {
+            throw new RuntimeException("Cette feuille appartient déjà à un autre vendeur");
+        }
 
         AchatMp achat = new AchatMp();
 
@@ -90,6 +98,14 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
 
         double total = quantite * prixAchat;
         achat.setPrixTotal(total);
+
+      
+        if (montantPaye > total) {
+            throw new RuntimeException("Montant payé supérieur au total");
+        }
+
+        double restant = total - montantPaye;
+        achat.setMontantReste(restant);
 
         StatusPayment status = determinePaymentStatus(total, montantPaye);
         achat.setStatusPayment(status);
@@ -138,6 +154,18 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
 
         return statusRepository.findByNom("PARTIEL")
                 .orElseThrow();
+    }
+
+        private void validateInputs(Double quantite, Double prixAchat, Double montantPaye) {
+        if (quantite == null || quantite <= 0) {
+            throw new RuntimeException("Quantité invalide");
+        }
+        if (prixAchat == null || prixAchat <= 0) {
+            throw new RuntimeException("Prix d'achat invalide");
+        }
+        if (montantPaye != null && montantPaye < 0) {
+            throw new RuntimeException("Montant payé invalide");
+        }
     }
 
 
