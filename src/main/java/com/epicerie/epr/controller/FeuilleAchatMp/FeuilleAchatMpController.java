@@ -32,10 +32,10 @@ public class FeuilleAchatMpController  {
         return ResponseEntity.ok(achats);
     }
 
-    @PostMapping
-    public ResponseEntity<FeuilleAchatMp> createFeuille() {
+    @PostMapping("/create/{vendeur_id}")
+    public ResponseEntity<FeuilleAchatMp> createFeuille(@PathVariable Long vendeur_id) {
 
-        FeuilleAchatMp feuille = service.createFeuille();
+        FeuilleAchatMp feuille = service.createFeuille(vendeur_id );
 
         return ResponseEntity.ok(feuille);
     }
@@ -48,7 +48,6 @@ public class FeuilleAchatMpController  {
         AchatMp achat = service.addAchatToFeuille(
                 feuilleId,
                 request.getTypeId(),
-                request.getVendeurId(),
                 request.getQuantite(),
                 request.getPrixAchat(),
                 request.getDateAchat(),

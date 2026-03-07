@@ -4,8 +4,9 @@ package com.epicerie.epr.service.impl.FeuilleAchatMp;
 import com.epicerie.epr.model.*;
 import com.epicerie.epr.repository.*;
 import com.epicerie.epr.service.feuilleachatmp.FeuillerAchatMpService;
-import lombok.RequiredArgsConstructor;
+import com.epicerie.epr.service.stockService.StockMpService;
 
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
     private final VendeurRepository vendeurRepository;
     private final StatusPayementRepository statusRepository;
     
+    private final StockMpService stockMpService;
+
      @Override
     @Transactional(readOnly = true)
     public List<FeuilleAchatMp> getFeuillesByVendeurId(Long vendeurId) {
@@ -45,13 +48,18 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
     }
 
     @Override
-    public FeuilleAchatMp createFeuille() {
+    public FeuilleAchatMp createFeuille(Long vendeur_id) {
 
         FeuilleAchatMp feuille = new FeuilleAchatMp();
 
         feuille.setNumero(generateNumeroFeuille());
         feuille.setDateCreation(LocalDate.now());
 
+        Vendeur vendeur = vendeurRepository.findById(vendeur_id)
+                .orElseThrow(() -> new RuntimeException("Vendeur introuvable"));
+
+        feuille.setVendeur(vendeur);
+        
         return feuilleAchatMpRepository.save(feuille);
     }
 
@@ -59,31 +67,33 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
     public AchatMp addAchatToFeuille(
             Long feuilleId,
             Long typeId,
-            Long vendeurId,
             Double quantite,
             Double prixAchat,
             LocalDate dateAchat,
             LocalDate semaineDebut,
             LocalDate semaineFin,
             Double montantPaye) {
+               
 
         FeuilleAchatMp feuille = feuilleAchatMpRepository.findById(feuilleId)
                 .orElseThrow(() -> new RuntimeException("Feuille introuvable"));
+        if (feuille.getValide()) {
+            throw new RuntimeException("Impossible d'ajouter un achat à une feuille validée");
+        }
 
         validateInputs(quantite, prixAchat, montantPaye);
 
         TypeMp type = typeRepository.findById(typeId)
                 .orElseThrow(() -> new RuntimeException("Type introuvable"));
+        
+        
+        Vendeur vendeur = feuille.getVendeur();
 
-        Vendeur vendeur = vendeurRepository.findById(vendeurId)
-                .orElseThrow(() -> new RuntimeException("Vendeur introuvable"));
+        if (vendeur == null) {
+            throw new RuntimeException("La feuille n'a pas de vendeur");
+            }
 
-        if (feuille.getVendeur() == null) {
-            feuille.setVendeur(vendeur);
-        } else if (!feuille.getVendeur().getId().equals(vendeurId)) {
-            throw new RuntimeException("Cette feuille appartient déjà à un autre vendeur");
-        }
-
+        
         AchatMp achat = new AchatMp();
 
         achat.setFeuilleAchatMp(feuille);
@@ -109,6 +119,15 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
 
         StatusPayment status = determinePaymentStatus(total, montantPaye);
         achat.setStatusPayment(status);
+        
+        stockMpService.updateStockAfterAchat(
+        type,
+        quantite,
+        total,
+        montantPaye,
+        restant,
+        dateAchat
+                    );
 
         return achatRepository.save(achat);
     }
@@ -155,8 +174,9 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
         return statusRepository.findByNom("PARTIEL")
                 .orElseThrow();
     }
+    
 
-        private void validateInputs(Double quantite, Double prixAchat, Double montantPaye) {
+    private void validateInputs(Double quantite, Double prixAchat, Double montantPaye) {
         if (quantite == null || quantite <= 0) {
             throw new RuntimeException("Quantité invalide");
         }

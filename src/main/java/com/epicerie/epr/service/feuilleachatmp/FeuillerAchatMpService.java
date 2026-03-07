@@ -14,13 +14,12 @@ public interface FeuillerAchatMpService {
     List<AchatMp> getAchatsByFeuilleId(Long feuilleId);
 
 
-    FeuilleAchatMp createFeuille();
+    FeuilleAchatMp createFeuille(Long vendeur_id);
 
     
     AchatMp addAchatToFeuille(
             Long feuilleId,
             Long typeId,
-            Long vendeurId,
             Double quantite,
             Double prixAchat,
             LocalDate dateAchat,
