@@ -12,6 +12,8 @@ import java.util.List;
 public interface FeuilleAchatMpRepository extends JpaRepository<FeuilleAchatMp, Long> {
     @Query("SELECT DISTINCT f FROM FeuilleAchatMp f JOIN f.achats a WHERE a.vendeur.id = :vendeurId")
     List<FeuilleAchatMp> findDistinctByAchatsVendeurId(@Param("vendeurId") Long vendeurId);
-    
+    //recupérer les feuilles d'achat validées d'un vendeur
+    List<FeuilleAchatMp> findByVendeurIdAndValideTrueOrderByDateCreationAsc(Long vendeurId);
+
     Optional<FeuilleAchatMp> findTopByOrderByIdDesc();
 }

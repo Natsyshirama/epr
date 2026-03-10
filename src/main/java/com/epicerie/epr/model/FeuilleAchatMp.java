@@ -23,6 +23,10 @@ public class FeuilleAchatMp {
     private LocalDate dateCreation;
 
     private Boolean valide = false;
+
+    private Double montantTotal;
+
+    private Double montantRestant;
     
     @ManyToOne
     @JoinColumn(name = "vendeur_id", nullable = false)

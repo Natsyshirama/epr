@@ -8,7 +8,8 @@ import com.epicerie.epr.service.feuilleachatmp.FeuillerAchatMpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
- import java.util.List;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/feuille-achat-mp")
@@ -59,7 +60,8 @@ public class FeuilleAchatMpController  {
         return ResponseEntity.ok(achat);
     }
     
-     @PostMapping("/{feuilleId}/valider")
+    //valider une feuille d'achat 
+    @PostMapping("/{feuilleId}/valider") 
     public ResponseEntity<FeuilleAchatMp> valider(
             @PathVariable Long feuilleId) {
 
@@ -67,5 +69,24 @@ public class FeuilleAchatMpController  {
 
         return ResponseEntity.ok(feuille);
     }
+
+    // Endpoint pour payer une feuille d'achat  
+    @PostMapping("/payeFeuille/{feuilleId}")
+    public ResponseEntity<FeuilleAchatMp> payerFeuille(
+            @PathVariable Long feuilleId,
+            @RequestParam Double montant) {
+
+        return ResponseEntity.ok(service.payerFeuille(feuilleId, montant));
+    }
+
+    @PostMapping("/payeVendeur/{vendeurId}")
+    public ResponseEntity<String> payerVendeur(
+        @PathVariable Long vendeurId,
+        @RequestParam Double montant) {
+
+    service.payerVendeur(vendeurId, montant);
+
+    return ResponseEntity.ok("Paiement effectué");
+}
     
 }

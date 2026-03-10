@@ -29,4 +29,9 @@ public interface FeuillerAchatMpService {
     );
 
     FeuilleAchatMp validerFeuille(Long feuilleId);
+
+    FeuilleAchatMp payerFeuille(Long feuilleId, Double montant);
+    void payerVendeur(Long vendeurId, Double montant);
+
+
 }

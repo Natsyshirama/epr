@@ -128,9 +128,73 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
         restant,
         dateAchat
                     );
+        
+        if (feuille.getMontantTotal() == null) {
+    feuille.setMontantTotal(0.0);
+}
 
+if (feuille.getMontantRestant() == null) {
+    feuille.setMontantRestant(0.0);
+}
+
+        feuille.setMontantTotal(feuille.getMontantTotal() + total);
+        feuille.setMontantRestant( feuille.getMontantRestant() + restant);
         return achatRepository.save(achat);
+
     }
+
+    @Override
+    @Transactional
+    public FeuilleAchatMp payerFeuille(Long feuilleId, Double montant) {
+
+    FeuilleAchatMp feuille = feuilleAchatMpRepository.findById(feuilleId)
+            .orElseThrow(() -> new RuntimeException("Feuille introuvable"));
+
+    if (montant > feuille.getMontantRestant()) {
+        throw new RuntimeException("Montant supérieur au restant");
+    }
+
+    feuille.setMontantRestant(feuille.getMontantRestant() - montant);
+
+    return feuilleAchatMpRepository.save(feuille);
+    }
+
+    @Override
+    @Transactional
+    public void payerVendeur(Long vendeurId, Double montant) {
+
+    List<FeuilleAchatMp> feuilles =
+            feuilleAchatMpRepository.findByVendeurIdAndValideTrueOrderByDateCreationAsc(vendeurId);
+
+    if (feuilles.isEmpty()) {
+        throw new RuntimeException("Aucune feuille validée trouvée pour ce vendeur");
+    }
+
+    double montantRestant = montant;
+
+    for (FeuilleAchatMp feuille : feuilles) {
+
+        if (montantRestant <= 0) {
+            break;
+        }
+
+        double restantFeuille = feuille.getMontantRestant();
+
+        if (restantFeuille <= montantRestant) {
+
+            feuille.setMontantRestant(0.0);
+            montantRestant -= restantFeuille;
+
+        } else {
+
+            feuille.setMontantRestant(restantFeuille - montantRestant);
+            montantRestant = 0;
+        }
+
+        feuilleAchatMpRepository.save(feuille);
+    }
+}
+
 
     @Override
     public FeuilleAchatMp validerFeuille(Long feuilleId) {
