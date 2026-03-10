@@ -194,6 +194,26 @@ if (feuille.getMontantRestant() == null) {
         feuilleAchatMpRepository.save(feuille);
     }
 }
+    @Override
+    public Double getMontantRestantFeuille(Long feuilleId) {
+
+        FeuilleAchatMp feuille = feuilleAchatMpRepository.findById(feuilleId)
+                .orElseThrow(() -> new RuntimeException("Feuille introuvable"));
+
+        return feuille.getMontantRestant();
+    }
+
+    @Override
+    public Double getMontantRestantVendeur(Long vendeurId) {
+
+        return feuilleAchatMpRepository.getMontantRestantVendeur(vendeurId);
+    }
+
+
+
+
+
+
 
 
     @Override

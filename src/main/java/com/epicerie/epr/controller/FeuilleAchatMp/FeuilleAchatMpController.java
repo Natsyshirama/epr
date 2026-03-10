@@ -89,4 +89,15 @@ public class FeuilleAchatMpController  {
     return ResponseEntity.ok("Paiement effectué");
 }
     
+    @GetMapping("/restant-feuille/{feuilleId}")
+    public Double getRestantFeuille(@PathVariable Long feuilleId) {
+
+        return service.getMontantRestantFeuille(feuilleId);
+    }
+
+    @GetMapping("/restant-vendeur/{vendeurId}")
+    public Double getRestantVendeur(@PathVariable Long vendeurId) {
+
+        return service.getMontantRestantVendeur(vendeurId);
+    }
 }
