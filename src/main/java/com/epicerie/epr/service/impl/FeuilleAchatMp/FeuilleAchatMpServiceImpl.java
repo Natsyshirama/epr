@@ -23,6 +23,7 @@ public class FeuilleAchatMpServiceImpl implements FeuillerAchatMpService {
     private final TypeMpRepository typeRepository;
     private final VendeurRepository vendeurRepository;
     private final StatusPayementRepository statusRepository;
+    private final PaymentMpRepository paymentMpRepository;
     
     private final StockMpService stockMpService;
 
@@ -139,7 +140,13 @@ if (feuille.getMontantRestant() == null) {
 
         feuille.setMontantTotal(feuille.getMontantTotal() + total);
         feuille.setMontantRestant( feuille.getMontantRestant() + restant);
+        
+        FeuilleAchatMp savedFeuille = feuilleAchatMpRepository.save(feuille);
+
+        addToPayment(savedFeuille, montantPaye);
+       
         return achatRepository.save(achat);
+
 
     }
 
@@ -156,8 +163,12 @@ if (feuille.getMontantRestant() == null) {
 
     feuille.setMontantRestant(feuille.getMontantRestant() - montant);
 
-    return feuilleAchatMpRepository.save(feuille);
-    }
+    FeuilleAchatMp savedFeuille = feuilleAchatMpRepository.save(feuille);
+
+    addToPayment(savedFeuille, montant);    
+
+    return savedFeuille;
+}
 
     @Override
     @Transactional
@@ -191,7 +202,10 @@ if (feuille.getMontantRestant() == null) {
             montantRestant = 0;
         }
 
-        feuilleAchatMpRepository.save(feuille);
+        FeuilleAchatMp savedFeuille = feuilleAchatMpRepository.save(feuille);
+
+        addToPayment(savedFeuille, montant);
+
     }
 }
     @Override
@@ -211,11 +225,6 @@ if (feuille.getMontantRestant() == null) {
 
 
 
-
-
-
-
-
     @Override
     public FeuilleAchatMp validerFeuille(Long feuilleId) {
 
@@ -226,6 +235,22 @@ if (feuille.getMontantRestant() == null) {
 
         return feuilleAchatMpRepository.save(feuille);
     }
+    
+
+    private void addToPayment(FeuilleAchatMp feuille, Double montant) {
+
+    if (montant == null || montant <= 0) {
+        return;
+    }
+
+    PaymentMp payment = new PaymentMp();
+    payment.setMontant(montant);
+    payment.setDateCreated(LocalDate.now());
+    payment.setFeuilleAchatMp(feuille);
+
+    paymentMpRepository.save(payment);
+}
+
 
     private String generateNumeroFeuille() {
 

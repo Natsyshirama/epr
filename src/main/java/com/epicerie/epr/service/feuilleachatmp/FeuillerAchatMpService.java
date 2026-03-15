@@ -2,6 +2,7 @@ package com.epicerie.epr.service.feuilleachatmp;
 
 
 import com.epicerie.epr.model.AchatMp;
+import com.epicerie.epr.model.PaymentMp;
 import com.epicerie.epr.model.FeuilleAchatMp;
 
 import java.time.LocalDate;
